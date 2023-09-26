@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: triehard
+Version: 0.0.0
+Summary: Multi-core prefix matching in Python
+Author: Marie Weiel
+Author-email: marie.weiel@kit.edu
+License: "BSD 3-Clause"
+Classifier: Development Status :: 4 - Beta
+Classifier: Programming Language :: Python
+Description-Content-Type: text/markdown; charset=UTF-8
+Requires-Dist: numpy
+Provides-Extra: testing
+Requires-Dist: pytest; extra == "testing"
+Requires-Dist: pytest-cov; extra == "testing"
+
+# trie-hard
+Match fast or die *trie*-ing: Multi-core prefix matching in `Python`

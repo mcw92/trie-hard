@@ -1,0 +1,12 @@
+README.md
+setup.cfg
+setup.py
+./triehard/__init__.py
+./triehard/trie.py
+./triehard/utils.py
+triehard.egg-info/PKG-INFO
+triehard.egg-info/SOURCES.txt
+triehard.egg-info/dependency_links.txt
+triehard.egg-info/not-zip-safe
+triehard.egg-info/requires.txt
+triehard.egg-info/top_level.txt
