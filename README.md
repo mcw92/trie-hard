@@ -16,8 +16,8 @@ Note that this is not really optimized yet in terms of runtime performance.
   - `words_10.txt`: Small list of 10 words that I like for debugging
   - `words_1k.txt`: Lexicographically sorted list of 1000 most frequent English words, taken from [ef.com/wwen/english-resources/english-vocabulary/top-1000-words/](https://www.ef.com/wwen/english-resources/english-vocabulary/top-1000-words/) on 2023-09-23 at 18:25.
   - `words_1k_shuffled.txt`: The same as above but in random order.
-  - `words_400M.txt`: Lexicographically sorted list of 370,105 English words taken from [github.com/dwyl/english-words/blob/master/words_alpha.txt](https://github.com/dwyl/english-words/blob/master/words_alpha.txt) on 2023-09-26 at 09:15.
-  - `words_400M_shuffled.txt`: The same as above but in random order.
+  - `words_400k.txt`: Lexicographically sorted list of 370,105 English words taken from [github.com/dwyl/english-words/blob/master/words_alpha.txt](https://github.com/dwyl/english-words/blob/master/words_alpha.txt) on 2023-09-26 at 09:15.
+  - `words_400k_shuffled.txt`: The same as above but in random order.
 
 
 - `triehard/`: The package containing the actual implementations
