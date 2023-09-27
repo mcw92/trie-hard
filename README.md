@@ -36,3 +36,6 @@ Note that this is not really optimized yet in terms of runtime performance.
 
 - `snippets/`: Potentially useful code snippets (not relevant for users).
 - `tests/`: This folder will maybe contain unit and integration test in the future.
+
+## Installation
+To install the `triehard` package, clone this repo and run `pip install -e .` or `python setup.py install`.
