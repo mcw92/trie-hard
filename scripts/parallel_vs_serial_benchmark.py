@@ -2,67 +2,26 @@ import time
 import multiprocessing
 from typing import List
 
-from triehard.utils import load_data, chunk_word_list, build_trie
-from triehard.trie import Trie
-
-
-def build_serial_trie(words: List[str]) -> Trie:
-    """
-    Build global trie serially using a single CPU core.
-
-    Parameters
-    ----------
-    words : list[str]
-        List of words to build the trie from
-
-    Returns
-    -------
-    Trie
-        Global trie for that list of words
-    """
-    global_trie = Trie()
-    for word in words:  # Loop through list of words to insert words into trie.
-        global_trie.insert(word)
-    return global_trie
-
-
-def build_threaded_trie(words: List[str]) -> Trie:
-    """
-    Build global trie by merging local tries built in a thread-parallel manner using all available CPU cores.
-
-    Parameters
-    ----------
-    words : list[str]
-        List of words to build the trie from
-
-    Returns
-    -------
-    Trie
-        Global trie for that list of words
-    """
-    global_trie = Trie()
-    chunks = chunk_word_list(words)
-    pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
-    local_tries = pool.map(build_trie, chunks)
-    for local_trie in local_tries:
-        global_trie.merge_with(local_trie)
-    return global_trie
+from triehard import load_data, chunk_word_list, Trie
 
 
 if __name__ == "__main__":
 
-    print("******************************")
-    print("* Trie-Based Prefix Matching *")
-    print("******************************")
+    print("**************************************************************")
+    print("* Trie-Based Prefix Matching Benchmark : Serial vs. Threaded *")
+    print("**************************************************************")
 
     words = load_data()
 
     start = time.perf_counter()
-    build_serial_trie(words)
+    serial_trie = Trie.build_trie(words)
     elapsed_serial = time.perf_counter() - start
-    print(f"Serial case using one CPU core took {elapsed_serial} s.")
+    print(f"Serial case using one CPU core to build trie took {elapsed_serial} s.")
 
     start = time.perf_counter()
-    build_threaded_trie(words)
+    threaded_trie = Trie.build_threaded_trie(chunk_word_list(words))
     elapsed_parallel = time.perf_counter() - start
-    print(f"Parallel case using all available CPU cores took {elapsed_parallel} s.")
+    print(f"Parallel case using all available CPU cores to build trie took {elapsed_parallel} s.")
+
+    # print(f"Words in serial trie: {serial_trie.get_all_keys()}")
+    # print(f"Words in threaded trie: {threaded_trie.get_all_keys()}")
