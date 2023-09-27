@@ -1,4 +1,6 @@
-from typing import List, Dict
+from __future__ import annotations
+from typing import List, Dict, Tuple
+import multiprocessing
 
 
 class TrieNode:
@@ -191,3 +193,52 @@ class Trie:
         """
         matches = []
         return self._dfs(self.root, "", matches)
+
+    @staticmethod
+    def build_trie(words: List[str]) -> Trie:
+        """
+        Build trie data structure from given list of words.
+
+        Parameters
+        ----------
+        words : list[str]
+            List of words to build trie from
+
+        Returns
+        -------
+        Trie
+            The respective trie data structure
+        """
+        trie = Trie()
+        for word in words:
+            trie.insert(word)
+        return trie
+
+    @staticmethod
+    def build_threaded_trie(chunks: List[List[str]]) -> Trie:
+        """
+        Build global trie for given list of words.
+
+        If the number of words in the list exceeds the number of CPU cores available, the list is chunked across all
+        available CPU cores. Local tries are built in parallel on each CPU core and finally merged into
+        one global trie.
+
+        Parameters
+        ----------
+        chunks : list[list[str]]
+            Chunked List of words to build trie from
+
+        Returns
+        -------
+        Trie
+            Global trie
+        """
+        num_cores = multiprocessing.cpu_count()  # Get number of available CPU cores.
+        assert num_cores <= len([word for chunk in chunks for word in chunk])
+        pool = multiprocessing.Pool(processes=num_cores)
+        local_tries = pool.map(Trie.build_trie, chunks)
+        global_trie = Trie()  # Initialize global trie.
+        for local_trie in local_tries:
+            global_trie.merge_with(local_trie)
+
+        return global_trie

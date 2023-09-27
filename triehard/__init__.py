@@ -15,11 +15,15 @@ finally:
     del get_distribution, DistributionNotFound
 
 from .trie import Trie
-from .utils import load_data, chunk_word_list, build_global_trie
+from .utils import load_data, chunk_word_list, build_global_trie, search_prefix
+from .gui import TrieStatic, TrieLive
 
 __all__ = [
     "Trie",
     "load_data",
     "chunk_word_list",
-    "build_global_trie"
+    "build_global_trie",
+    "search_prefix",
+    "TrieStatic",
+    "TrieLive",
 ]
