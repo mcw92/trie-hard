@@ -8,6 +8,5 @@ if __name__ == "__main__":
     print("* Serial Trie-Based Prefix Matching *")
     print("*************************************")
 
-    words = load_data()  # Load list of words from user-specified path.
-    trie = Trie.build_trie(words)  # Instantiate trie.
+    trie = Trie.build_trie(load_data())  # Build trie from list of words loaded from user-specified path.
     search_prefix(trie)  # Repeatedly search for user-defined prefix.
