@@ -215,6 +215,59 @@ class Trie:
         return trie
 
     @staticmethod
+    def merge_subtries(subtries: List[Trie]) -> Trie:
+        """
+        Merge a list of sub-tries into a single (sub-)trie.
+
+        Parameters
+        ----------
+        subtries : List[Trie]
+            list of sub-tries
+
+        Returns
+        -------
+        Trie
+            merged trie
+        """
+        global_trie = Trie()
+        for subtrie in subtries:
+            global_trie.merge_with(subtrie)
+        return global_trie
+
+    @staticmethod
+    def build_global_trie_parallel(subtries: List[Tries]) -> Trie:
+        """
+        Build global trie from list of sub-tries by recursively merging each two sub-tries.
+
+        Parameters
+        ----------
+        subtries : List[Trie]
+
+        Returns
+        -------
+        Trie
+            Globally merged trie
+        """
+        num_cores = multiprocessing.cpu_count()  # Get number of available CPU cores.
+        pool = multiprocessing.Pool(processes=num_cores)  # Create a pool of worker processes.
+
+        while len(subtries) > 1:  # Not yet all tries merged.
+            merged_subtries = []  # Initialize list to store next round of merged sub-tries.
+
+            # Pairwise merge of sub-tries in parallel.
+            for i in range(0, len(subtries), 2):  # Loop over list of sub-tries with a step size of 2.
+                if i + 1 < len(subtries):
+                    # Asynchronously execute `merge_subtries` function and get result
+                    merged_subtries.append(pool.apply_async(Trie.merge_subtries, (subtries[i:i + 2],)).get())
+                else:
+                    merged_subtries.append(subtries[i])
+
+            subtries = merged_subtries
+
+        # The final sub-trie is the global trie.
+        return subtries[0]
+
+    @staticmethod
     def build_threaded_trie(chunks: List[List[str]]) -> Trie:
         """
         Build global trie for given list of words.
@@ -237,8 +290,9 @@ class Trie:
         assert num_cores <= len([word for chunk in chunks for word in chunk])
         pool = multiprocessing.Pool(processes=num_cores)
         local_tries = pool.map(Trie.build_trie, chunks)
+
         global_trie = Trie()  # Initialize global trie.
         for local_trie in local_tries:
             global_trie.merge_with(local_trie)
-
         return global_trie
+        # return Trie.build_global_trie_parallel(local_tries)
