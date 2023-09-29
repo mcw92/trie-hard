@@ -15,7 +15,8 @@ finally:
     del get_distribution, DistributionNotFound
 
 from .trie import Trie
-from .utils import load_data, chunk_word_list, build_global_trie, search_prefix
+from .utils import (load_data, chunk_word_list, build_global_trie, search_prefix, search_prefix_parallel,
+                    _search_prefix_parallel)
 from .gui import TrieStatic, TrieLive
 
 __all__ = [
@@ -26,4 +27,6 @@ __all__ = [
     "search_prefix",
     "TrieStatic",
     "TrieLive",
+    "search_prefix_parallel",
+    "_search_prefix_parallel",
 ]
