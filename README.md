@@ -3,8 +3,8 @@
 *Created with [ideogram.ai](https://ideogram.ai/).*
 ## What `triehard` can do for you: Match fast or die *trie*-ing
 
-The `triehard` package provides a very basic proof-of-concept implementation of thread-parallel tries.
-A global trie can be built in a thread-parallel manner by merging local tries created on data chunks of the input word 
+The `triehard` package provides a very basic proof-of-concept implementation of process-parallel tries.
+A global trie can be built in a process-parallel manner by merging local tries created on data chunks of the input word 
 list on all available CPU cores.
 Furthermore, it offers a GUI-based live search for prefix matching on said tries.
 
@@ -28,9 +28,9 @@ Note that this is not really optimized yet in terms of runtime performance.
 
 - `scripts/`: Exemplary usage scripts
   - `serial_cli.py`: Serial trie-based prefix matching with command-line interface
-  - `parallel_cli.py`: Thread-parallel trie-based prefix matching with CLI
-  - `parallel_gui.py`: Thread-parallel trie-based prefix matching with graphical user interface
-  - `parallel_live.py`: Thread-parallel trie-based prefix matching with live search and GUI
+  - `parallel_cli.py`: Process-parallel trie-based prefix matching with CLI
+  - `parallel_gui.py`: Process-parallel trie-based prefix matching with graphical user interface
+  - `parallel_live.py`: Process-parallel trie-based prefix matching with live search and GUI
  
 - `benchmark/`: Scripts to benchmark the implementations
 
