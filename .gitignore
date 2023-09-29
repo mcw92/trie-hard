@@ -1,2 +1,7 @@
-triehard.egg-info
-triehard/__pycache__/*
+/triehard.egg-info
+/triehard/__pycache__/
+/scripts/build/
+/scripts/dist/
+/scripts/*.spec
+/scripts/.DS_Store
+/.DS_Store
