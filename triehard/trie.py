@@ -78,6 +78,26 @@ class Trie:
             node = node.children[char]  # Update currently considered node accordingly.
         node.is_end = True  # Mark end of word for last node.
 
+    @staticmethod
+    def build_trie(words: List[str]) -> Trie:
+        """
+        Build trie data structure from given list of words.
+
+        Parameters
+        ----------
+        words : list[str]
+            List of words to build trie from
+
+        Returns
+        -------
+        Trie
+            The respective trie data structure
+        """
+        trie = Trie()
+        for word in words:
+            trie.insert(word)
+        return trie
+
     def _dfs(self, node: TrieNode, prefix: str, matches: List[str]) -> List[str]:
         """
         Depth-first traversal (DFS) function that explores the nodes of the trie recursively, starting from a given
@@ -145,7 +165,8 @@ class Trie:
     def _dfs_merge(self, current_self: TrieNode, current_other: TrieNode) -> None:
         """
         Recursively merge nodes of two tries of different structure and depth. When merging nodes, check if a character
-        from the other trie exists in the self trie. If yes, recursively merge the children of those nodes.
+        from the other trie exists in the self trie. If yes, recursively merge the children of those nodes in a depth-
+        first search manner.
 
         Parameters
         ----------
@@ -182,37 +203,25 @@ class Trie:
 
         self._dfs_merge(self.root, other.root)
 
-    def get_all_keys(self) -> List[str]:
-        """
-        Get all keys in the trie.
-
-        Returns
-        -------
-        list
-            A list of all keys stored in the Trie.
-        """
-        matches = []
-        return self._dfs(self.root, "", matches)
-
     @staticmethod
-    def build_trie(words: List[str]) -> Trie:
+    def build_local_tries(chunks: List[List[str]]) -> List[Trie]:
         """
-        Build trie data structure from given list of words.
+        Build local tries for chunked list of words in parallel.
 
         Parameters
         ----------
-        words : list[str]
-            List of words to build trie from
+        chunks : list[list[str]]
+            Chunked List of words to build trie from
 
         Returns
         -------
-        Trie
-            The respective trie data structure
+        list[Trie]
+            List of local tries
         """
-        trie = Trie()
-        for word in words:
-            trie.insert(word)
-        return trie
+        num_cores = multiprocessing.cpu_count()  # Get number of available CPU cores.
+        assert num_cores <= len([word for chunk in chunks for word in chunk])
+        pool = multiprocessing.Pool(processes=num_cores)
+        return pool.map(Trie.build_trie, chunks)
 
     @staticmethod
     def merge_subtries(subtries: List[Trie]) -> Trie:
@@ -229,13 +238,35 @@ class Trie:
         Trie
             merged trie
         """
-        global_trie = Trie()
-        for subtrie in subtries:
+        global_trie = subtries[0]
+        for subtrie in subtries[1:]:
             global_trie.merge_with(subtrie)
         return global_trie
 
     @staticmethod
-    def build_global_trie_parallel(subtries: List[Tries]) -> Trie:
+    def build_trie_parallel(chunks: List[List[str]]) -> Trie:
+        """
+        Build global trie for chunked list of words.
+
+        Local tries are built in parallel on each CPU core and finally merged into one global trie.
+
+        Parameters
+        ----------
+        chunks : list[list[str]]
+            Chunked List of words to build trie from
+
+        Returns
+        -------
+        Trie
+            Global trie
+        """
+
+        local_tries = Trie.build_local_tries(chunks)  # Build local tries in parallel.
+        return Trie.merge_subtries(local_tries)
+        # return Trie.build_global_trie_parallel(local_tries)
+
+    @staticmethod
+    def merge_global_trie_parallel(subtries: List[Tries]) -> Trie:
         """
         Build global trie from list of sub-tries by recursively merging each two sub-tries.
 
@@ -267,32 +298,14 @@ class Trie:
         # The final sub-trie is the global trie.
         return subtries[0]
 
-    @staticmethod
-    def build_threaded_trie(chunks: List[List[str]]) -> Trie:
+    def get_all_keys(self) -> List[str]:
         """
-        Build global trie for given list of words.
-
-        If the number of words in the list exceeds the number of CPU cores available, the list is chunked across all
-        available CPU cores. Local tries are built in parallel on each CPU core and finally merged into
-        one global trie.
-
-        Parameters
-        ----------
-        chunks : list[list[str]]
-            Chunked List of words to build trie from
+        Get all keys in the trie.
 
         Returns
         -------
-        Trie
-            Global trie
+        list
+            A list of all keys stored in the Trie.
         """
-        num_cores = multiprocessing.cpu_count()  # Get number of available CPU cores.
-        assert num_cores <= len([word for chunk in chunks for word in chunk])
-        pool = multiprocessing.Pool(processes=num_cores)
-        local_tries = pool.map(Trie.build_trie, chunks)
-
-        global_trie = Trie()  # Initialize global trie.
-        for local_trie in local_tries:
-            global_trie.merge_with(local_trie)
-        return global_trie
-        # return Trie.build_global_trie_parallel(local_tries)
+        matches = []
+        return self._dfs(self.root, "", matches)
