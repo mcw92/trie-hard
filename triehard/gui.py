@@ -48,6 +48,7 @@ class TrieGui:
     display_result()
         Display results in text widget.
     """
+
     def __init__(self, root, parallel) -> None:
         """
         Initialize GUI for trie-based prefix matcher.
@@ -70,10 +71,16 @@ class TrieGui:
         # Labels are used for displaying text.
         # Entry fields allow users to input text.
         # Buttons provide interactive elements.
-        self.path_label = tk.Label(self.frame, text="Enter the path to your list of words:")
+        self.path_label = tk.Label(
+            self.frame, text="Enter the path to your list of words:"
+        )
         self.path_entry = tk.Entry(self.frame)
-        self.browse_button = tk.Button(self.frame, text="Browse", command=self.browse_file)
-        self.load_button = tk.Button(self.frame, text="Load Words", command=self.load_words)
+        self.browse_button = tk.Button(
+            self.frame, text="Browse", command=self.browse_file
+        )
+        self.load_button = tk.Button(
+            self.frame, text="Load Words", command=self.load_words
+        )
         self.prefix_label = tk.Label(self.frame, text="Enter prefix to search for:")
         self.prefix_entry = None
         self.result_text = tk.Text(self.frame, height=10, width=40, wrap=tk.WORD)
@@ -105,7 +112,9 @@ class TrieGui:
         path = filedialog.askopenfilename()
         # Clear current contents of `path_entry` widget (a text entry field) and insert selected file's path.
         self.path_entry.delete(0, tk.END)  # Clear current text in `path_entry` widget.
-        self.path_entry.insert(0, path)  # Insert selected file's path into `path_entry` widget to make it visible.
+        self.path_entry.insert(
+            0, path
+        )  # Insert selected file's path into `path_entry` widget to make it visible.
 
     def load_words(self) -> None:
         """
@@ -119,22 +128,30 @@ class TrieGui:
         """
         path = self.path_entry.get()  # Read path entered in `path_entry` widget.
         if not path:  # No path provided.
-            self.display_result("Please select a file.")  # Display corresponding message in text widget.
+            self.display_result(
+                "Please select a file."
+            )  # Display corresponding message in text widget.
             return
 
         try:  # Try to open file and load words.
             with open(path, "r") as f:
                 words = f.read().split("\n")
         except FileNotFoundError:  # File not found.
-            self.display_result(f"FileNotFoundError: The file {path} you specified could not be found.")
+            self.display_result(
+                f"FileNotFoundError: The file {path} you specified could not be found."
+            )
             return
 
-        self.trie, parallel = build_global_trie(words, self.parallel)  # Build trie from loaded list of words.
+        self.trie, parallel = build_global_trie(
+            words, self.parallel
+        )  # Build trie from loaded list of words.
         if parallel:
             res_str = "Successfully built global trie by merging local tries from available cores."
         else:
             res_str = "Successfully built global trie on a single CPU core."
-        self.display_result(res_str)  # Display corresponding success message in text widget.
+        self.display_result(
+            res_str
+        )  # Display corresponding success message in text widget.
 
     def display_result(self, text: str) -> None:
         """
@@ -163,15 +180,21 @@ class TrieGui:
             Prefix to search
         """
         if self.trie is None:  # Trie not loaded.
-            self.display_result("Trie not loaded.")  # Display corresponding message in text widget.
+            self.display_result(
+                "Trie not loaded."
+            )  # Display corresponding message in text widget.
             return
 
         if prefix:  # Prefix not empty.
             matches = self.trie.prefix_match(prefix)  # Get matches in trie.
-            result_str = f"{len(matches)} words match the prefix '{prefix}': \n{matches}"
+            result_str = (
+                f"{len(matches)} words match the prefix '{prefix}': \n{matches}"
+            )
             self.display_result(result_str)  # Display matches in text widget.
         else:  # No prefix given.
-            self.display_result("No prefix entered.")  # Display corresponding message in text widget.
+            self.display_result(
+                "No prefix entered."
+            )  # Display corresponding message in text widget.
 
 
 class TrieLive(TrieGui):
@@ -222,6 +245,7 @@ class TrieLive(TrieGui):
     display_result()
         Display results in text widget.
     """
+
     def __init__(self, root, parallel) -> None:
         """
         Initialize GUI for trie-based prefix matcher.
@@ -233,7 +257,9 @@ class TrieLive(TrieGui):
             Whether trie is to build serially or in a thread parallel manner
         """
         super().__init__(root, parallel)
-        self.prefix_var = StringVar()  # StringVar is a variable class for managing text variables in Tkinter.
+        self.prefix_var = (
+            StringVar()
+        )  # StringVar is a variable class for managing text variables in Tkinter.
         self.prefix_entry = tk.Entry(self.frame, textvariable=self.prefix_var)
         self.initialize_widgets()
 
@@ -319,6 +345,7 @@ class TrieStatic(TrieGui):
     display_result()
         Display results in text widget.
     """
+
     def __init__(self, root, parallel) -> None:
         """
         Initialize GUI for trie-based prefix matcher.
@@ -330,7 +357,9 @@ class TrieStatic(TrieGui):
             Whether trie is to build serially or in a thread parallel manner
         """
         super().__init__(root, parallel)
-        self.search_button = tk.Button(self.frame, text="Search", command=self.perform_prefix_match)
+        self.search_button = tk.Button(
+            self.frame, text="Search", command=self.perform_prefix_match
+        )
         self.prefix_entry = tk.Entry(self.frame)
         self.initialize_widgets()
 
@@ -346,4 +375,6 @@ class TrieStatic(TrieGui):
         """
         Perform live prefix matching on loaded trie using entered prefix.
         """
-        self._perform_prefix_match(self.prefix_entry.get())  # Retrieve text entered by user into `prefix_entry` widget.
+        self._perform_prefix_match(
+            self.prefix_entry.get()
+        )  # Retrieve text entered by user into `prefix_entry` widget.

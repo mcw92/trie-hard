@@ -14,7 +14,9 @@ if __name__ == "__main__":
 
     # Split the string_list into chunks for parallel processing
     chunk_size = len(string_list) // 2
-    chunks = [string_list[i:i + chunk_size] for i in range(0, len(string_list), chunk_size)]
+    chunks = [
+        string_list[i : i + chunk_size] for i in range(0, len(string_list), chunk_size)
+    ]
 
     # Use the pool.map() function to apply the function to each chunk in parallel
     results = pool.map(check_start_with_prefix, [(prefix, chunk) for chunk in chunks])

@@ -16,9 +16,12 @@ class TrieNode:
     is_end : bool
         Whether the node can be the end of a word
     """
+
     def __init__(self, char: str) -> None:
         self.value: str = char  # Character stored in this node.
-        self.children: Dict[str, TrieNode] = {}  # Dict of child nodes where keys are characters and values are nodes.
+        self.children: Dict[
+            str, TrieNode
+        ] = {}  # Dict of child nodes where keys are characters and values are nodes.
         self.is_end: bool = False  # Whether this can be the end of a word.
 
 
@@ -53,6 +56,7 @@ class Trie:
     get_all_keys()
         Get all keys, i.e., words stored, in the trie.
     """
+
     def __init__(self):
         """
         Initialize a trie structure.
@@ -71,9 +75,17 @@ class Trie:
             Word to be inserted into the trie.
         """
         node = self.root  # Always start from (empty) root node.
-        for char in word:  # Loop through word's characters and check if corresponding child node already exists.
-            if char not in node.children:  # Child node containing character does not yet exist.
-                node.children[char] = TrieNode(char)  # Add new node with that character to current node's children.
+        for (
+            char
+        ) in (
+            word
+        ):  # Loop through word's characters and check if corresponding child node already exists.
+            if (
+                char not in node.children
+            ):  # Child node containing character does not yet exist.
+                node.children[char] = TrieNode(
+                    char
+                )  # Add new node with that character to current node's children.
                 # `node.children` is a dict where keys are characters and values are trie nodes.
             node = node.children[char]  # Update currently considered node accordingly.
         node.is_end = True  # Mark end of word for last node.
@@ -154,7 +166,9 @@ class Trie:
 
         # Traverse the trie to the last node of the prefix
         for char in prefix:  # Loop through characters in prefix.
-            if char not in node.children:  # Current char not a valid child of current node.
+            if (
+                char not in node.children
+            ):  # Current char not a valid child of current node.
                 return []  # No words with the given prefix found. Return empty list.
             node = node.children[char]  # Update node.
 
@@ -280,16 +294,26 @@ class Trie:
             Globally merged trie
         """
         num_cores = multiprocessing.cpu_count()  # Get number of available CPU cores.
-        pool = multiprocessing.Pool(processes=num_cores)  # Create a pool of worker processes.
+        pool = multiprocessing.Pool(
+            processes=num_cores
+        )  # Create a pool of worker processes.
 
         while len(subtries) > 1:  # Not yet all tries merged.
-            merged_subtries = []  # Initialize list to store next round of merged sub-tries.
+            merged_subtries = (
+                []
+            )  # Initialize list to store next round of merged sub-tries.
 
             # Pairwise merge of sub-tries in parallel.
-            for i in range(0, len(subtries), 2):  # Loop over list of sub-tries with a step size of 2.
+            for i in range(
+                0, len(subtries), 2
+            ):  # Loop over list of sub-tries with a step size of 2.
                 if i + 1 < len(subtries):
                     # Asynchronously execute `merge_subtries` function and get result
-                    merged_subtries.append(pool.apply_async(Trie.merge_subtries, (subtries[i:i + 2],)).get())
+                    merged_subtries.append(
+                        pool.apply_async(
+                            Trie.merge_subtries, (subtries[i : i + 2],)
+                        ).get()
+                    )
                 else:
                     merged_subtries.append(subtries[i])
 

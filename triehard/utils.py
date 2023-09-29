@@ -21,7 +21,9 @@ def load_data() -> List[str]:
         with open(path, "r") as f:
             words = f.read().split("\n")
     except FileNotFoundError as e:
-        print(f"FileNotFoundError: The file {path} you specified could not be found. Exiting.")
+        print(
+            f"FileNotFoundError: The file {path} you specified could not be found. Exiting."
+        )
         exit()
     return words
 
@@ -42,17 +44,25 @@ def chunk_word_list(words: List[str]):
     """
     num_cores = multiprocessing.cpu_count()  # Determine number of available cores.
     num_words = len(words)  # Determine number of words in list.
-    basis_chunk_count = num_words // num_cores  # Determine base chunk size for each process.
+    basis_chunk_count = (
+        num_words // num_cores
+    )  # Determine base chunk size for each process.
     remainder_chunk_count = num_words % num_cores  # Determine remainder.
-    chunk_counts = basis_chunk_count * np.ones(num_cores, dtype=int)  # Construct array with each rank's chunk counts.
+    chunk_counts = basis_chunk_count * np.ones(
+        num_cores, dtype=int
+    )  # Construct array with each rank's chunk counts.
 
-    if remainder_chunk_count:  # Equally distribute remainder over respective processes to balance load.
+    if (
+        remainder_chunk_count
+    ):  # Equally distribute remainder over respective processes to balance load.
         chunk_counts[:remainder_chunk_count] += 1
     chunk_displs = np.concatenate(  # Determine displs via cumulative sum from counts.
         (np.zeros((1,), dtype=int), np.cumsum(chunk_counts, dtype=int)[:-1])
     )
 
-    return [words[displ:displ + count] for count, displ in zip(chunk_counts, chunk_displs)]  # Return chunks.
+    return [
+        words[displ : displ + count] for count, displ in zip(chunk_counts, chunk_displs)
+    ]  # Return chunks.
 
 
 def build_global_trie(words: List[str], parallel: bool = True) -> Tuple:
@@ -79,7 +89,9 @@ def build_global_trie(words: List[str], parallel: bool = True) -> Tuple:
     """
     num_cores = multiprocessing.cpu_count()  # Get number of available CPU cores.
     num_words = len(words)  # Get number of words in list.
-    if num_words < num_cores:  # Only use multiple threads if number of words is larger than number of cores.
+    if (
+        num_words < num_cores
+    ):  # Only use multiple threads if number of words is larger than number of cores.
         parallel = False
         print("Build one global trie.")
         global_trie = Trie.build_trie(words)
@@ -104,7 +116,9 @@ def search_prefix(trie: Trie) -> None:
         if prefix == "":
             break
         matches = trie.prefix_match(prefix)
-        print(f"The following {len(matches)} words match the prefix '{prefix}': {matches}")
+        print(
+            f"The following {len(matches)} words match the prefix '{prefix}': {matches}"
+        )
 
 
 def search_prefix_parallel(tries: List[Trie]) -> None:
@@ -121,7 +135,9 @@ def search_prefix_parallel(tries: List[Trie]) -> None:
         if prefix == "":
             break
         matches = _search_prefix_parallel(tries, prefix)
-        print(f"The following {len(matches)} words match the prefix '{prefix}': {matches}")
+        print(
+            f"The following {len(matches)} words match the prefix '{prefix}': {matches}"
+        )
 
 
 def _search_prefix_parallel(tries: List[Trie], prefix: str) -> List[str]:
@@ -145,6 +161,7 @@ def _search_prefix_parallel(tries: List[Trie], prefix: str) -> List[str]:
         # Search each trie in list in parallel and return merged matches.
         matches = pool.starmap(_search_and_match, [(trie, prefix) for trie in tries])
     return list(set([match for sublist in matches for match in sublist]))
+
 
 def _search_and_match(trie: Trie, prefix: str) -> List[str]:
     """
