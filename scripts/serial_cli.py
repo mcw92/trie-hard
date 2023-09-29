@@ -1,3 +1,5 @@
+#!/Users/marieweiel/Projects/vector/vector-venv/bin/python
+
 from triehard import Trie, load_data, search_prefix
 import numpy as np
 
